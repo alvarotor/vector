@@ -10,7 +10,7 @@ The system consists of two main services with a clear data flow:
 1. **Text Addition**: User sends text to FastAPI backend via `/add_text` endpoint
 2. **Storage**: Text stored in PostgreSQL with generated UUID
 3. **Notification**: UUID published to Redis message queue for vector processing
-4. **Processing**: Text services consumes message, creates vector embedding using Sentence Transformers
+4. **Processing**: Text services consume the message, create vector embeddings using Sentence Transformers
 5. **Vector Storage**: Embedding stored in Qdrant using PostgreSQL UUID as vector ID
 6. **Search**: Vector similarity search returns UUIDs → Full text fetched from PostgreSQL
 7. **Testing**: Sample script provides 19 comprehensive texts across technology, sports, and culinary topics
@@ -31,9 +31,10 @@ The system consists of two main services with a clear data flow:
 - **Vector Integration**: Triggers automatic vector embedding creation in Qdrant
 - **Endpoints**:
   - `POST /add_text` - Add new text documents (stores in PostgreSQL, triggers vector creation)
-  - `GET /search_text?query=<term>` - Search texts by content
-  - `GET /texts` - List all stored texts
-  - `DELETE /delete_text/{id}` - Remove texts
+  - `GET /search?query=<term>` - Semantic vector similarity search
+  - `GET /search_literal?query=<term>` - Literal text matching search
+  - `DELETE /delete_text/{id}` - Remove specific text by ID
+  - `DELETE /delete_all_texts` - Remove all texts
 
 ### Text Services (`/texts_ai`)
 - **Background processor** that creates vector embeddings for new texts
@@ -54,7 +55,7 @@ The system consists of two main services with a clear data flow:
 │   ├── Dockerfile
 │   └── texts_ai.py       # Vector processing service
 ├── docker-compose.yml         # Multi-service orchestration
-├── add_all_samples.py         # Sample data script (uses API)
+├── add_samples.sh         # Sample data script (uses API)
 └── README.md                  # This file
 ```
 
@@ -87,7 +88,7 @@ Run the sample script to populate the system (requires running services):
 docker compose up -d
 
 # Then add sample data via API
-python add_all_samples.py  # Adds 19-20 comprehensive texts on tech, sports, and food topics
+./add_samples.sh  # Adds 19-20 comprehensive texts on tech, sports, and food topics
 ```
 
 ## API Usage
@@ -99,12 +100,22 @@ curl -X POST "http://localhost:8000/add_text" \
      -d '{"text": "Your text content here"}'
 ```
 
-### Search Texts
+### Semantic Search (Vector-based)
 ```bash
-curl "http://localhost:8000/search_text?query=machine%20learning"
+curl "http://localhost:8000/search?query=machine%20learning"
 ```
 
-### List All Texts
+### Literal Search (Text matching)
 ```bash
-curl "http://localhost:8000/texts"
+curl "http://localhost:8000/search_literal?query=machine%20learning"
+```
+
+### Delete Text by ID
+```bash
+curl -X DELETE "http://localhost:8000/delete_text/{id}"
+```
+
+### Delete All Texts
+```bash
+curl -X DELETE "http://localhost:8000/delete_all_texts"
 ```
