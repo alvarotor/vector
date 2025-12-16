@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+message TranscribeAudioRequest {
+  bytes audio_data = 1;
+  string format = 2;           // "mp3", "wav", "flac", "m4a", etc.
+  string language = 3;         // "en", "es", or empty for auto-detect
+  int32 max_duration = 4;      // max seconds to process (default 300)
+}
+
+message TranscribeAudioResponse {
+  string text = 1;             // transcribed text
+  string detected_language = 2; // detected language code
+  float confidence = 3;        // 0.0-1.0 confidence score (if available)
+  float processing_time = 4;   // seconds taken to process
+}
+
+service TranscriberService {
+  rpc TranscribeAudio(TranscribeAudioRequest) returns (TranscribeAudioResponse);
+}

@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+message GenerateAudioFromTextRequest {
+  string text = 1;
+  string format = 2;  // "mp3" or "wav", default "mp3"
+}
+
+message GenerateAudioFromIdRequest {
+  string id = 1;
+  string format = 2;  // "mp3" or "wav", default "mp3"
+}
+
+message GenerateAudioResponse {
+  bytes audio_data = 1;
+  string format = 2;
+  int32 sample_rate = 3;
+}
+
+service AudioService {
+  rpc GenerateAudioFromText(GenerateAudioFromTextRequest) returns (GenerateAudioResponse);
+  rpc GenerateAudioFromId(GenerateAudioFromIdRequest) returns (GenerateAudioResponse);
+}

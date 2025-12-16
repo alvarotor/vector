@@ -1,0 +1,6 @@
+sqlalchemy
+psycopg2-binary
+grpcio
+protobuf==3.20.3
+gtts
+pydub
