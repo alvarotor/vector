@@ -22,15 +22,14 @@ services:
 
   backend:
     build: ./backend
-    ports:
-      - "8000:8000"
+    network_mode: host
     depends_on:
       - postgres
       - valkey
       - audios_ai
       - transcriber_ai
     environment:
-      - DATABASE_URL=postgresql://user:password@postgres:5432/db
+      - DATABASE_URL=postgresql://user:password@localhost:5432/db
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
       - REDIS_PORT=6379
       - GRPC_PORT=50051

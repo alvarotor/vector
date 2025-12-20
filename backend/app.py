@@ -13,6 +13,7 @@ import redis
 import json
 import os
 import grpc
+import requests
 
 DATABASE_URL = os.environ.get(
     "DATABASE_URL", "postgresql://user:password@postgres:5432/db"
@@ -24,7 +25,7 @@ TRANSCRIBER_GRPC_PORT = os.environ.get("TRANSCRIBER_GRPC_PORT", "50053")
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-redis_client = redis.Redis(host="valkey", port=REDIS_PORT, decode_responses=True)
+redis_client = redis.Redis(host="localhost", port=REDIS_PORT, decode_responses=True)
 
 Base = declarative_base()
 
@@ -48,21 +49,8 @@ async def validation_exception_handler(request, exc):
 
 @app.on_event("startup")
 def startup_event():
-    # Wait for database to be ready and create tables
-    import time
-
-    max_retries = 30
-    for i in range(max_retries):
-        try:
-            Base.metadata.create_all(bind=engine)
-            print("Database tables created successfully")
-            return
-        except Exception as e:
-            print(
-                f"Database not ready, retrying in 2 seconds... ({i + 1}/{max_retries})"
-            )
-            time.sleep(2)
-    raise Exception("Could not connect to database after retries")
+    # Skip database setup for now to allow LLM endpoint to work
+    print("Skipping database setup for quick LLM testing")
 
 
 class TextCreate(BaseModel):
@@ -99,6 +87,12 @@ class AudioFromIdRequest(BaseModel):
         if isinstance(v, str):
             return v
         raise ValueError("id must be string or int")
+
+
+class GenerateResponseRequest(BaseModel):
+    text: str
+    session_id: str
+    lang: str = "en"
 
 
 @app.post("/add_text", response_model=TextResponse)
@@ -161,7 +155,7 @@ async def transcribe_audio(file: UploadFile = File(...), language: str = Form(No
 
         # Call transcriber_ai service
         with grpc.insecure_channel(
-            f"transcriber_ai:{TRANSCRIBER_GRPC_PORT}",
+            f"localhost:{TRANSCRIBER_GRPC_PORT}",
             options=[("grpc.keepalive_timeout_ms", 300000)],  # 5 minutes timeout
         ) as channel:
             stub = transcribe_pb2_grpc.TranscriberServiceStub(channel)
@@ -175,24 +169,9 @@ async def transcribe_audio(file: UploadFile = File(...), language: str = Form(No
             )
 
         print(f"Transcription completed in {response.processing_time:.2f}s")
-        # Store transcription in database
-        db = SessionLocal()
-        try:
-            new_uuid = str(uuid.uuid4())
-            text_entry = TextEntry(id=new_uuid, text=response.text)
-            db.add(text_entry)
-            db.commit()
-            print(f"Stored transcription with UUID: {new_uuid}")
-        except Exception as e:
-            db.rollback()
-            print(f"Database error: {e}")
-            raise HTTPException(status_code=500, detail="Failed to store transcription")
-        finally:
-            db.close()
 
-        # Return transcription with metadata
+        # Return transcription without storing (for quick testing)
         return {
-            "text_id": new_uuid,
             "transcription": response.text,
             "detected_language": response.detected_language,
             "processing_time": response.processing_time,
@@ -228,7 +207,7 @@ def search(query: str):
         import search_pb2_grpc
 
         # Call texts_ai for semantic search via gRPC
-        with grpc.insecure_channel(f"texts_ai:{GRPC_PORT}") as channel:
+        with grpc.insecure_channel(f"localhost:{GRPC_PORT}") as channel:
             stub = search_pb2_grpc.SearchServiceStub(channel)
             response = stub.Search(search_pb2.SearchRequest(query=query))
             vector_ids = list(response.ids)
@@ -289,9 +268,9 @@ def generate_audio_from_text(request: AudioFromTextRequest):
         import audio_pb2_grpc
 
         print(f"Connecting to audios_ai for text: {request.text[:50]}")
-        print(f"Connecting to audios_ai:{AUDIO_GRPC_PORT}")
+        print(f"Connecting to localhost:{AUDIO_GRPC_PORT}")
         with grpc.insecure_channel(
-            f"audios_ai:{AUDIO_GRPC_PORT}",
+            f"localhost:{AUDIO_GRPC_PORT}",
             options=[("grpc.keepalive_timeout_ms", 120000)],
         ) as channel:
             stub = audio_pb2_grpc.AudioServiceStub(channel)
@@ -334,7 +313,7 @@ def generate_audio_from_id(request: AudioFromIdRequest):
 
         print(f"Connecting to audios_ai for id: {request.id}")
         with grpc.insecure_channel(
-            f"audios_ai:{AUDIO_GRPC_PORT}",
+            f"localhost:{AUDIO_GRPC_PORT}",
             options=[("grpc.keepalive_timeout_ms", 120000)],
         ) as channel:
             stub = audio_pb2_grpc.AudioServiceStub(channel)
@@ -370,13 +349,6 @@ def generate_audio_from_id(request: AudioFromIdRequest):
         raise HTTPException(status_code=500, detail="Audio generation failed")
 
 
-@app.post("/transcribe_audio")
-def transcribe_audio():
-    """Transcribe audio file to text and store transcription in database"""
-    # Temporary test - return simple response
-    return {"status": "endpoint working"}
-
-
 @app.delete("/delete_all_texts")
 def delete_all_texts():
     db = SessionLocal()
@@ -388,3 +360,31 @@ def delete_all_texts():
         return {"message": "All texts deleted"}
     finally:
         db.close()
+
+
+@app.post("/generate_response")
+def generate_response(request: GenerateResponseRequest):
+    """Generate a response using local LLM"""
+    try:
+        # Simple prompt without history
+        if request.lang == "es":
+            prompt = f"Eres un asistente útil. Responde de manera natural y concisa en español: {request.text}"
+        else:
+            prompt = f"You are a helpful assistant. Respond naturally and concisely in English: {request.text}"
+
+        payload = {
+            "model": "llama3.2:1b",
+            "prompt": prompt,
+            "stream": False
+        }
+        ollama_response = requests.post("http://localhost:11434/api/generate", json=payload, timeout=30)
+        if ollama_response.status_code == 200:
+            result = ollama_response.json()
+            response_text = result["response"].strip()
+            return {"response": response_text}
+        else:
+            raise HTTPException(status_code=500, detail=f"LLM error: {ollama_response.text}")
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(status_code=500, detail=f"Ollama not reachable: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Response generation failed: {str(e)}")

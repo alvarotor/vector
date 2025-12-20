@@ -14,6 +14,23 @@ from sqlalchemy.orm import sessionmaker
 TTS_AVAILABLE = True
 print("Piper binary available")
 
+# Download required voices if not present
+import subprocess
+voices = ["en_US-lessac-medium", "es_ES-sharvard-medium"]
+for voice in voices:
+    model_path = f'/root/.local/share/piper/{voice}.onnx'
+    if not os.path.exists(model_path):
+        print(f"Downloading voice: {voice}")
+        try:
+            subprocess.run(["piper/piper", "--model", voice, "--output_file", "/tmp/test.wav"], input=b"test", check=True, timeout=60)
+            print(f"Downloaded voice: {voice}")
+        except subprocess.TimeoutExpired:
+            print(f"Timeout downloading {voice}")
+        except subprocess.CalledProcessError:
+            print(f"Failed to download {voice}")
+    else:
+        print(f"Voice {voice} already available")
+
 # Audio processing setup
 try:
     from pydub import AudioSegment
@@ -53,7 +70,7 @@ class AudioServicer(audio_pb2_grpc.AudioServiceServicer):
             if request.voice:
                 model_name = request.voice
             elif request.language == "es":
-                model_name = "es_ES-davefx-medium"
+                model_name = "es_ES-sharvard-medium"
             else:
                 model_name = "tts_models/en/vctk/vits"
 
@@ -171,7 +188,7 @@ class AudioServicer(audio_pb2_grpc.AudioServiceServicer):
             if voice:
                 model_name = voice
             elif language == "es":
-                model_name = "es_ES-davefx-medium"
+                model_name = "es_ES-sharvard-medium"
             else:
                 model_name = "tts_models/en/vctk/vits"
 
