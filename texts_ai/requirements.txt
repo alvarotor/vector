@@ -1,0 +1,7 @@
+torch==2.9.1 --index-url https://download.pytorch.org/whl/cpu
+sentence-transformers
+qdrant-client
+redis
+grpcio
+protobuf==3.20.3
+# rebuild

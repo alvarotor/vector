@@ -1,0 +1,5 @@
+sqlalchemy
+psycopg2-binary
+grpcio==1.54.0
+piper-tts
+pydub

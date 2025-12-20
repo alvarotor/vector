@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+psycopg2-binary
+pydantic
+redis
+grpcio
+protobuf==3.20.3
+python-multipart

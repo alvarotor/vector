@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+message GenerateAudioFromTextRequest {
+  string text = 1;
+  string format = 2;  // "mp3" or "wav", default "mp3"
+  string language = 3;  // e.g., "en", "es", default "en"
+  string voice = 4;  // optional voice model, e.g., "en_US-lessac-medium"
+}
+
+message GenerateAudioFromIdRequest {
+  string id = 1;
+  string format = 2;  // "mp3" or "wav", default "mp3"
+  string language = 3;  // e.g., "en", "es", default "en"
+  string voice = 4;  // optional voice model, e.g., "en_US-lessac-medium"
+}
+
+message GenerateAudioResponse {
+  bytes audio_data = 1;
+  string format = 2;
+  int32 sample_rate = 3;
+}
+
+service AudioService {
+  rpc GenerateAudioFromText(GenerateAudioFromTextRequest) returns (GenerateAudioResponse);
+  rpc GenerateAudioFromId(GenerateAudioFromIdRequest) returns (GenerateAudioResponse);
+}

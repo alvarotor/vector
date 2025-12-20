@@ -1,0 +1,311 @@
+Mac TTS available
+pydub loaded successfully
+Imports done
+Script started
+Starting gRPC server on port 50052
+Servicer created: <class '__main__.AudioServicer'>
+Has GenerateAudioFromId: True
+Method object: <bound method AudioServicer.GenerateAudioFromId of <__main__.AudioServicer object at 0x109056b20>>
+Generic handler added
+gRPC server started
+/Users/alvaro/projects/github.com/alvarotor/vector/audios_ai/audios_ai.py:123: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+  Base = declarative_base()
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1766227127.888326 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1766227128.764560 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1766227129.249594 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+/Users/alvaro/projects/github.com/alvarotor/vector/audios_ai/audios_ai.py:123: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+  Base = declarative_base()
+I0000 00:00:1766227134.539188 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1766227135.061967 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1766227135.114124 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+/Users/alvaro/projects/github.com/alvarotor/vector/audios_ai/audios_ai.py:123: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+  Base = declarative_base()
+I0000 00:00:1766227137.682407 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1766227138.437666 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1766227138.497806 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+/Users/alvaro/projects/github.com/alvarotor/vector/audios_ai/audios_ai.py:123: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+  Base = declarative_base()
+I0000 00:00:1766228101.858030 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1766228102.695357 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1766228102.858113 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+GenerateAudioFromId called with id: 324bef13-a5d2-471c-91ed-fa44e32c0f85
+Looking up text with id: 324bef13-a5d2-471c-91ed-fa44e32c0f85
+Found text: Ramiro's house is better than yours...
+Generating audio for ID: 324bef13-a5d2-471c-91ed-fa44e32c0f85, text: Ramiro's house is better than yours in en with voice None...
+Generated 86328 bytes with voice Alex
+Generated audio length: 86328 bytes
+Silence removal failed: Decoding failed. ffmpeg returned error code: 183
+
+Output from ffmpeg/avlib:
+
+ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with Apple clang version 17.0.0 (clang-1700.4.4.1)
+  configuration: --prefix=/opt/homebrew/Cellar/ffmpeg/8.0.1 --enable-shared --enable-pthreads --enable-version3 --cc=clang --host-cflags= --host-ldflags= --enable-ffplay --enable-gnutls --enable-gpl --enable-libaom --enable-libaribb24 --enable-libbluray --enable-libdav1d --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopus --enable-librav1e --enable-librist --enable-librubberband --enable-libsnappy --enable-libsrt --enable-libssh --enable-libsvtav1 --enable-libtesseract --enable-libtheora --enable-libvidstab --enable-libvmaf --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libxvid --enable-lzma --enable-libfontconfig --enable-libfreetype --enable-frei0r --enable-libass --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-libspeex --enable-libsoxr --enable-libzmq --enable-libzimg --disable-libjack --disable-indev=jack --enable-videotoolbox --enable-audiotoolbox --enable-neon
+  libavutil      60.  8.100 / 60.  8.100
+  libavcodec     62. 11.100 / 62. 11.100
+  libavformat    62.  3.100 / 62.  3.100
+  libavdevice    62.  1.100 / 62.  1.100
+  libavfilter    11.  4.100 / 11.  4.100
+  libswscale      9.  1.100 /  9.  1.100
+  libswresample   6.  1.100 /  6.  1.100
+[wav @ 0xbe705c000] invalid start code FORM in RIFF header
+[cache @ 0xbe6c093b0] Statistics, cache hits:0 cache misses:1
+[in#0 @ 0xbe7058000] Error opening input: Invalid data found when processing input
+Error opening input file cache:pipe:0.
+Error opening input files: Invalid data found when processing input
+, using original audio
+GenerateAudioFromId called with id: 324bef13-a5d2-471c-91ed-fa44e32c0f85
+Looking up text with id: 324bef13-a5d2-471c-91ed-fa44e32c0f85
+Found text: Ramiro's house is better than yours...
+Generating audio for ID: 324bef13-a5d2-471c-91ed-fa44e32c0f85, text: Ramiro's house is better than yours in en with voice Daniel...
+Generated 97410 bytes with voice Daniel
+Generated audio length: 97410 bytes
+Silence removal failed: Decoding failed. ffmpeg returned error code: 183
+
+Output from ffmpeg/avlib:
+
+ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with Apple clang version 17.0.0 (clang-1700.4.4.1)
+  configuration: --prefix=/opt/homebrew/Cellar/ffmpeg/8.0.1 --enable-shared --enable-pthreads --enable-version3 --cc=clang --host-cflags= --host-ldflags= --enable-ffplay --enable-gnutls --enable-gpl --enable-libaom --enable-libaribb24 --enable-libbluray --enable-libdav1d --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopus --enable-librav1e --enable-librist --enable-librubberband --enable-libsnappy --enable-libsrt --enable-libssh --enable-libsvtav1 --enable-libtesseract --enable-libtheora --enable-libvidstab --enable-libvmaf --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libxvid --enable-lzma --enable-libfontconfig --enable-libfreetype --enable-frei0r --enable-libass --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-libspeex --enable-libsoxr --enable-libzmq --enable-libzimg --disable-libjack --disable-indev=jack --enable-videotoolbox --enable-audiotoolbox --enable-neon
+  libavutil      60.  8.100 / 60.  8.100
+  libavcodec     62. 11.100 / 62. 11.100
+  libavformat    62.  3.100 / 62.  3.100
+  libavdevice    62.  1.100 / 62.  1.100
+  libavfilter    11.  4.100 / 11.  4.100
+  libswscale      9.  1.100 /  9.  1.100
+  libswresample   6.  1.100 /  6.  1.100
+[wav @ 0x8cf038000] invalid start code FORM in RIFF header
+[cache @ 0x8cf034150] Statistics, cache hits:0 cache misses:1
+[in#0 @ 0x8cec44000] Error opening input: Invalid data found when processing input
+Error opening input file cache:pipe:0.
+Error opening input files: Invalid data found when processing input
+, using original audio
+GenerateAudioFromId called with id: 324bef13-a5d2-471c-91ed-fa44e32c0f85
+Looking up text with id: 324bef13-a5d2-471c-91ed-fa44e32c0f85
+Found text: Ramiro's house is better than yours...
+Generating audio for ID: 324bef13-a5d2-471c-91ed-fa44e32c0f85, text: Ramiro's house is better than yours in en with voice Fiona...
+Generated 86328 bytes with voice Fiona
+Generated audio length: 86328 bytes
+Silence removal failed: Decoding failed. ffmpeg returned error code: 183
+
+Output from ffmpeg/avlib:
+
+ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with Apple clang version 17.0.0 (clang-1700.4.4.1)
+  configuration: --prefix=/opt/homebrew/Cellar/ffmpeg/8.0.1 --enable-shared --enable-pthreads --enable-version3 --cc=clang --host-cflags= --host-ldflags= --enable-ffplay --enable-gnutls --enable-gpl --enable-libaom --enable-libaribb24 --enable-libbluray --enable-libdav1d --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopus --enable-librav1e --enable-librist --enable-librubberband --enable-libsnappy --enable-libsrt --enable-libssh --enable-libsvtav1 --enable-libtesseract --enable-libtheora --enable-libvidstab --enable-libvmaf --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libxvid --enable-lzma --enable-libfontconfig --enable-libfreetype --enable-frei0r --enable-libass --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-libspeex --enable-libsoxr --enable-libzmq --enable-libzimg --disable-libjack --disable-indev=jack --enable-videotoolbox --enable-audiotoolbox --enable-neon
+  libavutil      60.  8.100 / 60.  8.100
+  libavcodec     62. 11.100 / 62. 11.100
+  libavformat    62.  3.100 / 62.  3.100
+  libavdevice    62.  1.100 / 62.  1.100
+  libavfilter    11.  4.100 / 11.  4.100
+  libswscale      9.  1.100 /  9.  1.100
+  libswresample   6.  1.100 /  6.  1.100
+[wav @ 0x942c38000] invalid start code FORM in RIFF header
+[cache @ 0x943044150] Statistics, cache hits:0 cache misses:1
+[in#0 @ 0x943040000] Error opening input: Invalid data found when processing input
+Error opening input file cache:pipe:0.
+Error opening input files: Invalid data found when processing input
+, using original audio
+GenerateAudioFromId called with id: 787579ea-19bb-4ed3-a15b-b34d5f6b0b3a
+Looking up text with id: 787579ea-19bb-4ed3-a15b-b34d5f6b0b3a
+Found text: Svelte Kit 2, Quick, Astro 3. They all either recommend or default to TypeScript when generating new...
+Generating audio for ID: 787579ea-19bb-4ed3-a15b-b34d5f6b0b3a, text: Svelte Kit 2, Quick, Astro 3. They all either reco in en with voice en_US-lessac-medium...
+Generated 462462 bytes with voice en_US-lessac-medium
+Generated audio length: 462462 bytes
+/Users/alvaro/projects/github.com/alvarotor/vector/audios_ai/audios_ai.py:123: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+  Base = declarative_base()
+I0000 00:00:1766228102.954069 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1766228103.726250 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1766228103.781042 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+/Users/alvaro/projects/github.com/alvarotor/vector/audios_ai/audios_ai.py:123: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+  Base = declarative_base()
+I0000 00:00:1766228103.870789 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1766228104.634661 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1766228104.689046 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+/Users/alvaro/projects/github.com/alvarotor/vector/audios_ai/audios_ai.py:123: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+  Base = declarative_base()
+I0000 00:00:1766230631.131543 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1766230632.004467 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1766230632.310713 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+Silence removal failed: Decoding failed. ffmpeg returned error code: 183
+
+Output from ffmpeg/avlib:
+
+ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with Apple clang version 17.0.0 (clang-1700.4.4.1)
+  configuration: --prefix=/opt/homebrew/Cellar/ffmpeg/8.0.1 --enable-shared --enable-pthreads --enable-version3 --cc=clang --host-cflags= --host-ldflags= --enable-ffplay --enable-gnutls --enable-gpl --enable-libaom --enable-libaribb24 --enable-libbluray --enable-libdav1d --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopus --enable-librav1e --enable-librist --enable-librubberband --enable-libsnappy --enable-libsrt --enable-libssh --enable-libsvtav1 --enable-libtesseract --enable-libtheora --enable-libvidstab --enable-libvmaf --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libxvid --enable-lzma --enable-libfontconfig --enable-libfreetype --enable-frei0r --enable-libass --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-libspeex --enable-libsoxr --enable-libzmq --enable-libzimg --disable-libjack --disable-indev=jack --enable-videotoolbox --enable-audiotoolbox --enable-neon
+  libavutil      60.  8.100 / 60.  8.100
+  libavcodec     62. 11.100 / 62. 11.100
+  libavformat    62.  3.100 / 62.  3.100
+  libavdevice    62.  1.100 / 62.  1.100
+  libavfilter    11.  4.100 / 11.  4.100
+  libswscale      9.  1.100 /  9.  1.100
+  libswresample   6.  1.100 /  6.  1.100
+[wav @ 0xad905c000] invalid start code FORM in RIFF header
+[cache @ 0xad9058150] Statistics, cache hits:0 cache misses:1
+[in#0 @ 0xad8c24000] Error opening input: Invalid data found when processing input
+Error opening input file cache:pipe:0.
+Error opening input files: Invalid data found when processing input
+, using original audio
+GenerateAudioFromId called with id: 787579ea-19bb-4ed3-a15b-b34d5f6b0b3a
+Looking up text with id: 787579ea-19bb-4ed3-a15b-b34d5f6b0b3a
+Found text: Svelte Kit 2, Quick, Astro 3. They all either recommend or default to TypeScript when generating new...
+Generating audio for ID: 787579ea-19bb-4ed3-a15b-b34d5f6b0b3a, text: Svelte Kit 2, Quick, Astro 3. They all either reco in en with voice en_US-ryan-medium...
+Generated 462462 bytes with voice en_US-ryan-medium
+Generated audio length: 462462 bytes
+Silence removal failed: Decoding failed. ffmpeg returned error code: 183
+
+Output from ffmpeg/avlib:
+
+ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with Apple clang version 17.0.0 (clang-1700.4.4.1)
+  configuration: --prefix=/opt/homebrew/Cellar/ffmpeg/8.0.1 --enable-shared --enable-pthreads --enable-version3 --cc=clang --host-cflags= --host-ldflags= --enable-ffplay --enable-gnutls --enable-gpl --enable-libaom --enable-libaribb24 --enable-libbluray --enable-libdav1d --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopus --enable-librav1e --enable-librist --enable-librubberband --enable-libsnappy --enable-libsrt --enable-libssh --enable-libsvtav1 --enable-libtesseract --enable-libtheora --enable-libvidstab --enable-libvmaf --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libxvid --enable-lzma --enable-libfontconfig --enable-libfreetype --enable-frei0r --enable-libass --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-libspeex --enable-libsoxr --enable-libzmq --enable-libzimg --disable-libjack --disable-indev=jack --enable-videotoolbox --enable-audiotoolbox --enable-neon
+  libavutil      60.  8.100 / 60.  8.100
+  libavcodec     62. 11.100 / 62. 11.100
+  libavformat    62.  3.100 / 62.  3.100
+  libavdevice    62.  1.100 / 62.  1.100
+  libavfilter    11.  4.100 / 11.  4.100
+  libswscale      9.  1.100 /  9.  1.100
+  libswresample   6.  1.100 /  6.  1.100
+[wav @ 0x99703c000] invalid start code FORM in RIFF header
+[cache @ 0x996c40150] Statistics, cache hits:0 cache misses:1
+[in#0 @ 0x997038000] Error opening input: Invalid data found when processing input
+Error opening input file cache:pipe:0.
+Error opening input files: Invalid data found when processing input
+, using original audio
+GenerateAudioFromId called with id: 787579ea-19bb-4ed3-a15b-b34d5f6b0b3a
+Looking up text with id: 787579ea-19bb-4ed3-a15b-b34d5f6b0b3a
+Found text: Svelte Kit 2, Quick, Astro 3. They all either recommend or default to TypeScript when generating new...
+Generating audio for ID: 787579ea-19bb-4ed3-a15b-b34d5f6b0b3a, text: Svelte Kit 2, Quick, Astro 3. They all either reco in en with voice en_US-amy-medium...
+Generated 462462 bytes with voice en_US-amy-medium
+Generated audio length: 462462 bytes
+Silence removal failed: Decoding failed. ffmpeg returned error code: 183
+
+Output from ffmpeg/avlib:
+
+ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with Apple clang version 17.0.0 (clang-1700.4.4.1)
+  configuration: --prefix=/opt/homebrew/Cellar/ffmpeg/8.0.1 --enable-shared --enable-pthreads --enable-version3 --cc=clang --host-cflags= --host-ldflags= --enable-ffplay --enable-gnutls --enable-gpl --enable-libaom --enable-libaribb24 --enable-libbluray --enable-libdav1d --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopus --enable-librav1e --enable-librist --enable-librubberband --enable-libsnappy --enable-libsrt --enable-libssh --enable-libsvtav1 --enable-libtesseract --enable-libtheora --enable-libvidstab --enable-libvmaf --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libxvid --enable-lzma --enable-libfontconfig --enable-libfreetype --enable-frei0r --enable-libass --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-libspeex --enable-libsoxr --enable-libzmq --enable-libzimg --disable-libjack --disable-indev=jack --enable-videotoolbox --enable-audiotoolbox --enable-neon
+  libavutil      60.  8.100 / 60.  8.100
+  libavcodec     62. 11.100 / 62. 11.100
+  libavformat    62.  3.100 / 62.  3.100
+  libavdevice    62.  1.100 / 62.  1.100
+  libavfilter    11.  4.100 / 11.  4.100
+  libswscale      9.  1.100 /  9.  1.100
+  libswresample   6.  1.100 /  6.  1.100
+[wav @ 0x9f503c000] invalid start code FORM in RIFF header
+[cache @ 0x9f4c40150] Statistics, cache hits:0 cache misses:1
+[in#0 @ 0x9f5038000] Error opening input: Invalid data found when processing input
+Error opening input file cache:pipe:0.
+Error opening input files: Invalid data found when processing input
+, using original audio
+GenerateAudioFromId called with id: 431b4c91-e9fe-4d00-a216-040aa24f6d57
+Looking up text with id: 431b4c91-e9fe-4d00-a216-040aa24f6d57
+Found text: Hello world test...
+Generating audio for ID: 431b4c91-e9fe-4d00-a216-040aa24f6d57, text: Hello world test in en with voice en_US-lessac-medium...
+Generated 55152 bytes with voice en_US-lessac-medium
+Generated audio length: 55152 bytes
+/Users/alvaro/projects/github.com/alvarotor/vector/audios_ai/audios_ai.py:123: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+  Base = declarative_base()
+I0000 00:00:1766230632.411460 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1766230633.143116 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1766230633.195364 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+/Users/alvaro/projects/github.com/alvarotor/vector/audios_ai/audios_ai.py:123: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+  Base = declarative_base()
+I0000 00:00:1766230633.340925 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1766230634.076796 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1766230634.129689 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+/Users/alvaro/projects/github.com/alvarotor/vector/audios_ai/audios_ai.py:123: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+  Base = declarative_base()
+I0000 00:00:1766230810.604728 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1766230811.397725 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1766230811.564048 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+Silence removal failed: Decoding failed. ffmpeg returned error code: 183
+
+Output from ffmpeg/avlib:
+
+ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with Apple clang version 17.0.0 (clang-1700.4.4.1)
+  configuration: --prefix=/opt/homebrew/Cellar/ffmpeg/8.0.1 --enable-shared --enable-pthreads --enable-version3 --cc=clang --host-cflags= --host-ldflags= --enable-ffplay --enable-gnutls --enable-gpl --enable-libaom --enable-libaribb24 --enable-libbluray --enable-libdav1d --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopus --enable-librav1e --enable-librist --enable-librubberband --enable-libsnappy --enable-libsrt --enable-libssh --enable-libsvtav1 --enable-libtesseract --enable-libtheora --enable-libvidstab --enable-libvmaf --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libxvid --enable-lzma --enable-libfontconfig --enable-libfreetype --enable-frei0r --enable-libass --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-libspeex --enable-libsoxr --enable-libzmq --enable-libzimg --disable-libjack --disable-indev=jack --enable-videotoolbox --enable-audiotoolbox --enable-neon
+  libavutil      60.  8.100 / 60.  8.100
+  libavcodec     62. 11.100 / 62. 11.100
+  libavformat    62.  3.100 / 62.  3.100
+  libavdevice    62.  1.100 / 62.  1.100
+  libavfilter    11.  4.100 / 11.  4.100
+  libswscale      9.  1.100 /  9.  1.100
+  libswresample   6.  1.100 /  6.  1.100
+[wav @ 0xa1f060000] invalid start code FORM in RIFF header
+[cache @ 0xa1f05c150] Statistics, cache hits:0 cache misses:1
+[in#0 @ 0xa1ec20000] Error opening input: Invalid data found when processing input
+Error opening input file cache:pipe:0.
+Error opening input files: Invalid data found when processing input
+, using original audio
+GenerateAudioFromId called with id: 431b4c91-e9fe-4d00-a216-040aa24f6d57
+Looking up text with id: 431b4c91-e9fe-4d00-a216-040aa24f6d57
+Found text: Hello world test...
+Generating audio for ID: 431b4c91-e9fe-4d00-a216-040aa24f6d57, text: Hello world test in en with voice en_US-ryan-medium...
+Generated 55152 bytes with voice en_US-ryan-medium
+Generated audio length: 55152 bytes
+Silence removal failed: Decoding failed. ffmpeg returned error code: 183
+
+Output from ffmpeg/avlib:
+
+ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with Apple clang version 17.0.0 (clang-1700.4.4.1)
+  configuration: --prefix=/opt/homebrew/Cellar/ffmpeg/8.0.1 --enable-shared --enable-pthreads --enable-version3 --cc=clang --host-cflags= --host-ldflags= --enable-ffplay --enable-gnutls --enable-gpl --enable-libaom --enable-libaribb24 --enable-libbluray --enable-libdav1d --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopus --enable-librav1e --enable-librist --enable-librubberband --enable-libsnappy --enable-libsrt --enable-libssh --enable-libsvtav1 --enable-libtesseract --enable-libtheora --enable-libvidstab --enable-libvmaf --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libxvid --enable-lzma --enable-libfontconfig --enable-libfreetype --enable-frei0r --enable-libass --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-libspeex --enable-libsoxr --enable-libzmq --enable-libzimg --disable-libjack --disable-indev=jack --enable-videotoolbox --enable-audiotoolbox --enable-neon
+  libavutil      60.  8.100 / 60.  8.100
+  libavcodec     62. 11.100 / 62. 11.100
+  libavformat    62.  3.100 / 62.  3.100
+  libavdevice    62.  1.100 / 62.  1.100
+  libavfilter    11.  4.100 / 11.  4.100
+  libswscale      9.  1.100 /  9.  1.100
+  libswresample   6.  1.100 /  6.  1.100
+[wav @ 0x88ac3c000] invalid start code FORM in RIFF header
+[cache @ 0x88b044150] Statistics, cache hits:0 cache misses:1
+[in#0 @ 0x88b040000] Error opening input: Invalid data found when processing input
+Error opening input file cache:pipe:0.
+Error opening input files: Invalid data found when processing input
+, using original audio
+GenerateAudioFromId called with id: 431b4c91-e9fe-4d00-a216-040aa24f6d57
+Looking up text with id: 431b4c91-e9fe-4d00-a216-040aa24f6d57
+Found text: Hello world test...
+Generating audio for ID: 431b4c91-e9fe-4d00-a216-040aa24f6d57, text: Hello world test in en with voice en_US-amy-medium...
+Generated 55152 bytes with voice en_US-amy-medium
+Generated audio length: 55152 bytes
+Silence removal failed: Decoding failed. ffmpeg returned error code: 183
+
+Output from ffmpeg/avlib:
+
+ffmpeg version 8.0.1 Copyright (c) 2000-2025 the FFmpeg developers
+  built with Apple clang version 17.0.0 (clang-1700.4.4.1)
+  configuration: --prefix=/opt/homebrew/Cellar/ffmpeg/8.0.1 --enable-shared --enable-pthreads --enable-version3 --cc=clang --host-cflags= --host-ldflags= --enable-ffplay --enable-gnutls --enable-gpl --enable-libaom --enable-libaribb24 --enable-libbluray --enable-libdav1d --enable-libharfbuzz --enable-libjxl --enable-libmp3lame --enable-libopus --enable-librav1e --enable-librist --enable-librubberband --enable-libsnappy --enable-libsrt --enable-libssh --enable-libsvtav1 --enable-libtesseract --enable-libtheora --enable-libvidstab --enable-libvmaf --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libxvid --enable-lzma --enable-libfontconfig --enable-libfreetype --enable-frei0r --enable-libass --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-libspeex --enable-libsoxr --enable-libzmq --enable-libzimg --disable-libjack --disable-indev=jack --enable-videotoolbox --enable-audiotoolbox --enable-neon
+  libavutil      60.  8.100 / 60.  8.100
+  libavcodec     62. 11.100 / 62. 11.100
+  libavformat    62.  3.100 / 62.  3.100
+  libavdevice    62.  1.100 / 62.  1.100
+  libavfilter    11.  4.100 / 11.  4.100
+  libswscale      9.  1.100 /  9.  1.100
+  libswresample   6.  1.100 /  6.  1.100
+[wav @ 0x88ec34000] invalid start code FORM in RIFF header
+[cache @ 0x88f040150] Statistics, cache hits:0 cache misses:1
+[in#0 @ 0x88f03c000] Error opening input: Invalid data found when processing input
+Error opening input file cache:pipe:0.
+Error opening input files: Invalid data found when processing input
+, using original audio
+GenerateAudioFromId called with id: 24df19cf-7125-4ff5-8b35-f0bed146d87f
+Looking up text with id: 24df19cf-7125-4ff5-8b35-f0bed146d87f
+Found text: Test with Piper voices...
+Generating audio for ID: 24df19cf-7125-4ff5-8b35-f0bed146d87f, text: Test with Piper voices in en with voice en_US-lessac-medium...
+Generated 71164 bytes with voice en_US-lessac-medium
+Generated audio length: 71164 bytes
+/Users/alvaro/projects/github.com/alvarotor/vector/audios_ai/audios_ai.py:123: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+  Base = declarative_base()
+I0000 00:00:1766230811.654919 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1766230812.392322 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1766230812.443505 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+/Users/alvaro/projects/github.com/alvarotor/vector/audios_ai/audios_ai.py:123: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+  Base = declarative_base()
+I0000 00:00:1766230812.533920 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1766230813.293664 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers
+I0000 00:00:1766230813.343376 1782428 fork_posix.cc:71] Other threads are currently calling into gRPC, skipping fork() handlers

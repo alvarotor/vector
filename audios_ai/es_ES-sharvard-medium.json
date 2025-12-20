@@ -1,0 +1,19 @@
+{
+  "audio": {
+    "sample_rate": 22050
+  },
+  "espeak": {
+    "voice": "es"
+  },
+  "inference": {
+    "noise_scale": 0.667,
+    "length_scale": 1.0,
+    "noise_w": 0.8
+  },
+  "num_symbols": 256,
+  "num_speakers": 1,
+  "phoneme_map": null,
+  "phoneme_id_map": null,
+  "special_phonemes": null,
+  "phonemes": "es-es"
+}
