@@ -25,3 +25,7 @@ Thumbs.db
 
 # Docker (if any build artifacts)
 # Add if needed
+
+# Frontend build
+dist/
+node_modules/

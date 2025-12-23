@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from fastapi import FastAPI, File, Form, UploadFile
+from fastapi import FastAPI, File, Form, UploadFile, Request
 from fastapi.responses import StreamingResponse
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -14,18 +14,23 @@ import json
 import os
 import grpc
 import requests
+import time
 
 DATABASE_URL = os.environ.get(
     "DATABASE_URL", "postgresql://user:password@postgres:5432/db"
 )
+REDIS_HOST = os.environ.get("REDIS_HOST", "valkey")
 REDIS_PORT = int(os.environ.get("REDIS_PORT", 6379))
 GRPC_PORT = os.environ.get("GRPC_PORT", "50051")
+AUDIO_GRPC_HOST = os.environ.get("AUDIO_GRPC_HOST", "audios_ai")
 AUDIO_GRPC_PORT = os.environ.get("AUDIO_GRPC_PORT", "50052")
+TRANSCRIBER_GRPC_HOST = os.environ.get("TRANSCRIBER_GRPC_HOST", "transcriber_ai")
 TRANSCRIBER_GRPC_PORT = os.environ.get("TRANSCRIBER_GRPC_PORT", "50053")
+OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://host.docker.internal:11434")
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-redis_client = redis.Redis(host="localhost", port=REDIS_PORT, decode_responses=True)
+redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=True)
 
 Base = declarative_base()
 
@@ -40,6 +45,15 @@ class TextEntry(Base):
 
 app = FastAPI()
 
+# Add CORS middleware
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, specify allowed origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request, exc):
@@ -118,11 +132,13 @@ def add_text(entry: TextCreate):
 
 class TranscribeAudioRequest(BaseModel):
     language: Union[str, None] = None  # Optional language hint ("en", "es", etc.)
+    session_id: Union[str, None] = None  # Optional session ID for language persistence
 
 
 @app.post("/transcribe_audio")
-async def transcribe_audio(file: UploadFile = File(...), language: str = Form(None)):
+async def transcribe_audio(request: Request, file: UploadFile = File(...), language: str = Form(None), session_id: str = Form(None)):
     """Transcribe audio file to text and store transcription in database"""
+    endpoint_start = time.time()
     try:
         import transcribe_pb2
         import transcribe_pb2_grpc
@@ -149,13 +165,24 @@ async def transcribe_audio(file: UploadFile = File(...), language: str = Form(No
         else:
             raise HTTPException(status_code=400, detail="Unsupported audio format")
 
+        user_agent = request.headers.get("User-Agent", "unknown")
         print(
-            f"Transcribing audio: {file.filename} ({len(file_content)} bytes, {format_type})"
+            f"Transcribe endpoint from {user_agent}: {file.filename} ({len(file_content)} bytes, {format_type})"
         )
 
+        # Check for stored language
+        stored_lang = None
+        if session_id:
+            lang_key = f"lang:{session_id}"
+            stored_lang = redis_client.get(lang_key)
+            if stored_lang:
+                print(f"Using stored language for session {session_id}: {stored_lang}")
+                language = stored_lang
+
         # Call transcriber_ai service
+        grpc_start = time.time()
         with grpc.insecure_channel(
-            f"localhost:{TRANSCRIBER_GRPC_PORT}",
+            f"{TRANSCRIBER_GRPC_HOST}:{TRANSCRIBER_GRPC_PORT}",
             options=[("grpc.keepalive_timeout_ms", 300000)],  # 5 minutes timeout
         ) as channel:
             stub = transcribe_pb2_grpc.TranscriberServiceStub(channel)
@@ -167,13 +194,27 @@ async def transcribe_audio(file: UploadFile = File(...), language: str = Form(No
                     max_duration=300,  # 5 minutes max
                 )
             )
+        grpc_time = time.time() - grpc_start
+        print(f"gRPC call to transcriber_ai: {grpc_time:.2f}s")
 
         print(f"Transcription completed in {response.processing_time:.2f}s")
+        total_endpoint_time = time.time() - endpoint_start
+        print(f"Total transcribe endpoint time: {total_endpoint_time:.2f}s")
+
+        # Store detected language for session
+        if session_id and response.detected_language in ["en", "es"]:
+            lang_key = f"lang:{session_id}"
+            redis_client.set(lang_key, response.detected_language, ex=86400)  # Expire in 1 day
+            print(f"Stored language {response.detected_language} for session {session_id}")
+
+        # Use stored language if available, else detected
+        effective_lang = stored_lang if stored_lang else response.detected_language
 
         # Return transcription without storing (for quick testing)
         return {
             "transcription": response.text,
             "detected_language": response.detected_language,
+            "effective_language": effective_lang,
             "processing_time": response.processing_time,
             "confidence": getattr(response, "confidence", None),  # May not be available
         }
@@ -207,7 +248,7 @@ def search(query: str):
         import search_pb2_grpc
 
         # Call texts_ai for semantic search via gRPC
-        with grpc.insecure_channel(f"localhost:{GRPC_PORT}") as channel:
+        with grpc.insecure_channel(f"texts_ai:{GRPC_PORT}") as channel:
             stub = search_pb2_grpc.SearchServiceStub(channel)
             response = stub.Search(search_pb2.SearchRequest(query=query))
             vector_ids = list(response.ids)
@@ -267,10 +308,10 @@ def generate_audio_from_text(request: AudioFromTextRequest):
         import audio_pb2
         import audio_pb2_grpc
 
-        print(f"Connecting to audios_ai for text: {request.text[:50]}")
-        print(f"Connecting to localhost:{AUDIO_GRPC_PORT}")
+        print(f"Connecting to {AUDIO_GRPC_HOST} for text: {request.text[:50]}")
+        print(f"Connecting to {AUDIO_GRPC_HOST}:{AUDIO_GRPC_PORT}")
         with grpc.insecure_channel(
-            f"localhost:{AUDIO_GRPC_PORT}",
+            f"{AUDIO_GRPC_HOST}:{AUDIO_GRPC_PORT}",
             options=[("grpc.keepalive_timeout_ms", 120000)],
         ) as channel:
             stub = audio_pb2_grpc.AudioServiceStub(channel)
@@ -311,9 +352,9 @@ def generate_audio_from_id(request: AudioFromIdRequest):
         import audio_pb2
         import audio_pb2_grpc
 
-        print(f"Connecting to audios_ai for id: {request.id}")
+        print(f"Connecting to {AUDIO_GRPC_HOST} for id: {request.id}")
         with grpc.insecure_channel(
-            f"localhost:{AUDIO_GRPC_PORT}",
+            f"{AUDIO_GRPC_HOST}:{AUDIO_GRPC_PORT}",
             options=[("grpc.keepalive_timeout_ms", 120000)],
         ) as channel:
             stub = audio_pb2_grpc.AudioServiceStub(channel)
@@ -364,27 +405,55 @@ def delete_all_texts():
 
 @app.post("/generate_response")
 def generate_response(request: GenerateResponseRequest):
-    """Generate a response using local LLM"""
+    """Generate a response using local LLM with conversation history"""
     try:
-        # Simple prompt without history
+        # Load conversation history
+        history_key = f"conversation:{request.session_id}"
+        history = redis_client.lrange(history_key, 0, -1)
+        print(f"Loaded history for {request.session_id}: {len(history)} messages")
+
+        # Add user message
+        user_msg = f"User: {request.text}"
+        redis_client.rpush(history_key, user_msg)
+        history.append(user_msg)
+        print(f"Added user message: {request.text}")
+
+        # Build prompt with history
         if request.lang == "es":
-            prompt = f"Eres un asistente útil. Responde de manera natural y concisa en español: {request.text}"
+            system_prompt = "Eres un asistente útil. Responde de manera natural y concisa en español."
         else:
-            prompt = f"You are a helpful assistant. Respond naturally and concisely in English: {request.text}"
+            system_prompt = "You are a helpful assistant. Respond naturally and concisely in English."
+
+        conversation_text = "\n".join(history[-10:])  # Last 10 messages
+        prompt = f"{system_prompt}\n\n{conversation_text}\nAssistant:"
+        print(f"Prompt length: {len(prompt)} characters")
 
         payload = {
             "model": "llama3.2:1b",
             "prompt": prompt,
             "stream": False
         }
-        ollama_response = requests.post("http://localhost:11434/api/generate", json=payload, timeout=30)
+        print(f"Calling Ollama at {OLLAMA_URL}...")
+        ollama_response = requests.post(f"{OLLAMA_URL}/api/generate", json=payload, timeout=30)
+        print(f"Ollama response status: {ollama_response.status_code}")
         if ollama_response.status_code == 200:
             result = ollama_response.json()
             response_text = result["response"].strip()
+            print(f"Ollama response: {response_text[:100]}...")
+            # Add AI response to history
+            ai_msg = f"Assistant: {response_text}"
+            redis_client.rpush(history_key, ai_msg)
+            # Expire after 1 day
+            redis_client.expire(history_key, 86400)
             return {"response": response_text}
         else:
+            print(f"Ollama error: {ollama_response.text}")
             raise HTTPException(status_code=500, detail=f"LLM error: {ollama_response.text}")
     except requests.exceptions.RequestException as e:
+        print(f"Ollama not reachable: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Ollama not reachable: {str(e)}")
     except Exception as e:
+        print(f"Response generation failed: {str(e)}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Response generation failed: {str(e)}")

@@ -15,6 +15,14 @@ REDIS_PORT = int(os.environ.get("REDIS_PORT", 6379))
 QDRANT_PORT = int(os.environ.get("QDRANT_PORT", 6333))
 GRPC_PORT = os.environ.get("GRPC_PORT", "50051")
 
+REDIS_HOST = os.environ.get("REDIS_HOST", "valkey")
+
+QDRANT_HOST = os.environ.get("QDRANT_HOST", "qdrant")
+
+REDIS_HOST = os.environ.get("REDIS_HOST", "valkey")
+
+QDRANT_HOST = os.environ.get("QDRANT_HOST", "qdrant")
+
 redis_client = redis.Redis(host="valkey", port=REDIS_PORT, decode_responses=True)
 model = SentenceTransformer("all-MiniLM-L6-v2")
 qdrant_client = QdrantClient(host="qdrant", port=QDRANT_PORT)

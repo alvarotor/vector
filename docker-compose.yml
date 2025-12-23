@@ -22,14 +22,15 @@ services:
 
   backend:
     build: ./backend
-    network_mode: host
+    ports:
+      - "8000:8000"
     depends_on:
       - postgres
       - valkey
       - audios_ai
       - transcriber_ai
     environment:
-      - DATABASE_URL=postgresql://user:password@localhost:5432/db
+      - DATABASE_URL=postgresql://user:password@postgres:5432/db
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
       - REDIS_PORT=6379
       - GRPC_PORT=50051
@@ -44,17 +45,33 @@ services:
       - valkey_data:/data
 
   texts_ai:
+
     build: ./texts_ai
+
     command: python texts_ai.py
+
     ports:
+
       - "50051:50051"
+
     depends_on:
+
       - valkey
+
       - qdrant
+
     environment:
+
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+
+      - REDIS_HOST=valkey
+
       - REDIS_PORT=6379
+
+      - QDRANT_HOST=qdrant
+
       - QDRANT_PORT=6333
+
       - GRPC_PORT=50051
 
   audios_ai:
@@ -74,6 +91,8 @@ services:
       - "50053:50053"
     environment:
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+      - MODEL_NAME=base
+      - MODEL_DEVICE=auto
 
   # http://localhost:8080/?pgsql=postgres&username=user&db=db&password=password
   adminer:
@@ -87,6 +106,15 @@ services:
       - ADMINER_DEFAULT_DB=db
       - ADMINER_DEFAULT_USER=user
       - ADMINER_DEFAULT_PASSWORD=password
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    environment:
+      - VITE_BACKEND_URL=http://host.docker.internal:8000
 
 volumes:
   postgres_data:

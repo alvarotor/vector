@@ -28,11 +28,14 @@ except FileNotFoundError:
 
 def record_audio(mic_index):
     """Record audio until silence or spacebar press"""
+    record_start = time.time()
     recognizer = sr.Recognizer()
     recognizer.pause_threshold = 1.0  # 1 second silence to stop
     with sr.Microphone(device_index=mic_index) as source:
         print("Listening... Speak or press spacebar.")
         audio = recognizer.listen(source)
+    record_duration = time.time() - record_start
+    print(f"Recording completed in {record_duration:.2f}s")
     return audio
 
 def transcribe_audio(audio):
@@ -42,16 +45,23 @@ def transcribe_audio(audio):
         temp_file_name = temp_file.name
         audio_data = audio.get_wav_data()
         temp_file.write(audio_data)
+    wav_size = len(audio_data)
+    print(f"Audio prepared: {wav_size} bytes")
 
+    transcribe_start = time.time()
     with open(temp_file_name, "rb") as f:
         files = {"file": ("audio.wav", f, "audio/wav")}
-        response = requests.post(f"{BACKEND_URL}/transcribe_audio", files=files)
+        data = {"session_id": session_id}
+        headers = {"User-Agent": "voice_chat.py"}
+        response = requests.post(f"{BACKEND_URL}/transcribe_audio", files=files, data=data, headers=headers)
+    transcribe_time = time.time() - transcribe_start
+    print(f"Transcribe API call: {transcribe_time:.2f}s")
 
     os.unlink(temp_file_name)
 
     if response.status_code == 200:
         data = response.json()
-        return data["transcription"], data.get("detected_language", "en")
+        return data["transcription"], data.get("effective_language", "en")
     else:
         print(f"Transcription failed: {response.text}")
         return None, "en"
@@ -59,7 +69,10 @@ def transcribe_audio(audio):
 def generate_response(text, lang="en"):
     """Send text to LLM for response"""
     payload = {"text": text, "session_id": session_id, "lang": lang}
+    response_start = time.time()
     response = requests.post(f"{BACKEND_URL}/generate_response", json=payload)
+    response_time = time.time() - response_start
+    print(f"Generate Response API call: {response_time:.2f}s")
     if response.status_code == 200:
         data = response.json()
         return data["response"]
@@ -70,10 +83,13 @@ def generate_response(text, lang="en"):
 def generate_audio(text, lang="en"):
     """Send text to TTS with voice based on language, fallback to English if fails"""
     voices = ["es_ES-sharvard-medium" if lang == "es" else "en_US-lessac-medium", "en_US-lessac-medium"]
+    audio_start = time.time()
     for voice in voices:
         payload = {"text": text, "format": "wav", "voice": voice}
         response = requests.post(f"{BACKEND_URL}/generate_audio_from_text", json=payload)
         if response.status_code == 200:
+            audio_time = time.time() - audio_start
+            print(f"Generate Audio API call: {audio_time:.2f}s")
             return response.content
         else:
             print(f"Audio generation failed with {voice}: {response.text}")

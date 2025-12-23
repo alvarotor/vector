@@ -1,12 +1,19 @@
-# Vector Text Search System
+# Voice Chat AI System with Vector Text Search
 
-A distributed system for storing and searching text documents using vector embeddings.
+A distributed AI system for voice-based conversations with semantic text search capabilities. Features include voice transcription, AI response generation, text-to-speech, and vector-based document storage and retrieval.
 
 ## Architecture
 
-The system consists of three main services with a clear data flow:
+The system consists of multiple services enabling voice chat with AI and vector text search:
 
-### Data Flow
+### Voice Chat Flow
+1. **Voice Input**: User speaks into microphone (web app or CLI script)
+2. **Transcription**: Audio sent to transcriber_ai service using OpenAI Whisper (local, offline)
+3. **Response Generation**: Transcribed text sent to backend, which generates AI response using local LLM (Ollama)
+4. **Text-to-Speech**: AI response converted to audio using audios_ai service with Piper TTS (local, offline)
+5. **Audio Playback**: Generated audio played back to user
+
+### Text Search Flow
 1. **Text Addition**: User sends text to FastAPI backend via `/add_text` endpoint
 2. **Storage**: Text stored in PostgreSQL with generated UUID
 3. **Notification**: UUID published to Redis message queue for vector processing
@@ -27,12 +34,13 @@ The system consists of three main services with a clear data flow:
 ✅ **Robust Evaluation**: Enables thorough testing of semantic similarity, clustering, and search accuracy
 
 ### Backend Service (`/backend`)
-- **FastAPI application** for handling text storage, search, and audio generation requests
-- **Dependencies**: FastAPI, SQLAlchemy, Pydantic, Redis client, gRPC clients
+- **FastAPI application** for handling text storage, search, audio generation, and AI response requests
+- **Dependencies**: FastAPI, SQLAlchemy, Pydantic, Redis client, gRPC clients, requests (for Ollama)
 - **Database**: PostgreSQL for persistent text storage with UUIDs
 - **Message Queue**: Publishes new text UUIDs to Redis for vector processing
 - **Vector Integration**: Triggers automatic vector embedding creation in Qdrant
 - **Audio Integration**: Calls audios_ai service for text-to-speech generation
+- **AI Integration**: Uses local Ollama LLM for conversational responses
 - **Endpoints**:
   - `POST /add_text` - Add new text documents (stores in PostgreSQL, triggers vector creation)
   - `GET /search?query=<term>` - Semantic vector similarity search
@@ -42,6 +50,7 @@ The system consists of three main services with a clear data flow:
   - `POST /generate_audio_from_text` - Generate audio from provided text
   - `POST /generate_audio_from_id` - Generate audio from text by ID
   - `POST /transcribe_audio` - Transcribe audio file to text and store result
+  - `POST /generate_response` - Generate AI response using local LLM (for voice chat)
 
 ### Text Services (`/texts_ai`)
 - **Background processor** that creates vector embeddings for new texts
@@ -67,19 +76,40 @@ The system consists of three main services with a clear data flow:
 - **Endpoints**:
   - `TranscribeAudio` - Transcribe audio file to text
 
+### Frontend Service (`/frontend`)
+- **Preact web application** for voice chat interface
+- **Features**: Real-time voice recording, transcription, AI response generation, and audio playback
+- **Dependencies**: Preact, Vite, TypeScript
+- **Session Management**: Maintains conversation context with session IDs
+- **Audio Processing**: Web Audio API for recording, backend for transcription/TTS
+- **URL**: http://localhost:3000
+
+### Voice Chat Script (`voice_chat.py`)
+- **Python CLI application** for voice chat via command line
+- **Features**: Microphone recording, transcription, AI responses, audio playback with interrupt support
+- **Dependencies**: speech_recognition, pyaudio, pydub, pynput, requests
+- **Controls**: Spacebar to interrupt playback, Ctrl+C to quit
+- **Session Persistence**: Saves session ID to `session.txt` for continuity
+
 ## Project Structure
 
 ```
-/vector/
 ├── backend/
-│   ├── requirements.txt       # FastAPI, SQLAlchemy, Pydantic, Redis
+│   ├── requirements.txt       # FastAPI, SQLAlchemy, Pydantic, Redis, gRPC, requests
 │   ├── Dockerfile
-│   ├── app.py                 # Full FastAPI app with PostgreSQL
+│   ├── app.py                 # Full FastAPI app with PostgreSQL and Ollama integration
 │   ├── audio_pb2.py           # gRPC stubs for audio service
-│   └── audio_pb2_grpc.py      # gRPC stubs for audio service
+│   ├── audio_pb2_grpc.py      # gRPC stubs for audio service
+│   ├── search_pb2.py          # gRPC stubs for search service
+│   ├── search_pb2_grpc.py     # gRPC stubs for search service
+│   ├── transcribe_pb2.py      # gRPC stubs for transcriber service
+│   └── transcribe_pb2_grpc.py # gRPC stubs for transcriber service
 ├── texts_ai/
 │   ├── requirements.txt       # Redis, Sentence Transformers, Qdrant
 │   ├── Dockerfile
+│   ├── search.proto           # gRPC service definition
+│   ├── search_pb2.py          # gRPC stubs
+│   ├── search_pb2_grpc.py     # gRPC stubs
 │   └── texts_ai.py            # Vector processing service
 ├── audios_ai/
 │   ├── requirements.txt       # piper-tts, pydub, SQLAlchemy, gRPC
@@ -95,17 +125,38 @@ The system consists of three main services with a clear data flow:
 │   ├── transcribe_pb2.py      # gRPC stubs
 │   ├── transcribe_pb2_grpc.py # gRPC stubs
 │   └── transcriber_ai.py      # Speech-to-text service
+├── frontend/
+│   ├── package.json           # Preact, Vite, TypeScript
+│   ├── Dockerfile
+│   ├── src/
+│   │   ├── app.tsx            # Voice chat web app
+│   │   ├── index.css
+│   │   └── main.tsx
+│   ├── index.html
+│   ├── tsconfig.json
+│   └── vite.config.ts
 ├── docker-compose.yml         # Multi-service orchestration
+├── voice_chat.py              # CLI voice chat script
 ├── add_samples.sh             # Sample data script (uses API)
+├── session.txt                # Session persistence for CLI
 └── README.md                  # This file
 ```
 
 ## Running the System
 
-### Full System (with databases)
+### Prerequisites
+- Docker and Docker Compose
+- Ollama installed and running locally (for AI responses): `ollama pull llama3.2:1b`
+
+### Full System (with databases and all services)
 ```bash
 docker compose up --build
 ```
+Access points:
+- **Frontend (Voice Chat)**: http://localhost:3000
+- **Backend API**: http://localhost:8000
+- **Qdrant Dashboard**: http://localhost:6333/dashboard
+- **Adminer (Database)**: http://localhost:8080
 
 ### Individual Services
 ```bash
@@ -119,10 +170,27 @@ cd texts_ai
 pip install -r requirements.txt
 python texts_ai.py
 
+# Audio services
+cd audios_ai
+pip install -r requirements.txt
+python audios_ai.py
+
 # Transcription services
 cd transcriber_ai
 pip install -r requirements.txt
 python transcriber_ai.py
+
+# Frontend (in another terminal)
+cd frontend
+npm install
+npm run dev
+```
+
+### Voice Chat CLI
+```bash
+# Requires all services running
+pip install speech_recognition pyaudio pydub pynput
+python voice_chat.py
 ```
 
 ## Adding Sample Data
@@ -188,8 +256,8 @@ curl -X POST "http://localhost:8000/generate_audio_from_id" \
 Transcribes audio files and stores the transcription as searchable text.
 ```bash
 curl -X POST "http://localhost:8000/transcribe_audio" \
-     -F "file=@audio_file.mp3" \
-     -F "language=en"  # Optional: "en", "es", or omit for auto-detect
+      -F "file=@audio_file.mp3" \
+      -F "language=en"  # Optional: "en", "es", or omit for auto-detect
 ```
 
 **Response:**
@@ -199,5 +267,20 @@ curl -X POST "http://localhost:8000/transcribe_audio" \
   "transcription": "Your transcribed text...",
   "detected_language": "en",
   "processing_time": 2.3
+}
+```
+
+### Generate AI Response
+Generates a conversational AI response using local LLM (for voice chat).
+```bash
+curl -X POST "http://localhost:8000/generate_response" \
+      -H "Content-Type: application/json" \
+      -d '{"text": "Hello, how are you?", "session_id": "session-123", "lang": "en"}'
+```
+
+**Response:**
+```json
+{
+  "response": "Hello! I'm doing well, thank you for asking. How can I help you today?"
 }
 ```

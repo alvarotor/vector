@@ -17,6 +17,10 @@ import ffmpeg
 
 print("Imports done")
 
+MODEL_NAME = os.environ.get("MODEL_NAME", "base")
+
+MODEL_DEVICE = os.environ.get("MODEL_DEVICE", "auto")
+
 # Global model cache
 whisper_model = None
 
@@ -28,12 +32,19 @@ def load_whisper_model():
         print("Loading Whisper model (this may take a moment)...")
         start_time = time.time()
 
-        # Use CPU by default, can be configured for GPU
-        device = "cuda" if torch.cuda.is_available() else "cpu"
+        if MODEL_DEVICE == "auto":
+
+            device = "mps" if torch.backends.mps.is_available() else ("cuda" if torch.cuda.is_available() else "cpu")
+
+        else:
+
+            device = MODEL_DEVICE
+
         print(f"Using device: {device}")
 
-        # Load base model for speed (can be configured to medium/large)
-        whisper_model = whisper.load_model("base", device=device)
+        # Load model for speed (can be configured to medium/large)
+
+        whisper_model = whisper.load_model(MODEL_NAME, device=device)
 
         load_time = time.time() - start_time
         print(".2f")
@@ -69,19 +80,25 @@ def preprocess_audio(audio_bytes, format_type):
 
 class TranscriberServicer(transcribe_pb2_grpc.TranscriberServiceServicer):
     def TranscribeAudio(self, request, context):
+        audio_size = len(request.audio_data)
         print(
-            f"TranscribeAudio called - format: {request.format}, language: {request.language or 'auto'}"
+            f"TranscribeAudio called - format: {request.format}, language: {request.language or 'auto'}, audio size: {audio_size} bytes"
         )
 
         start_time = time.time()
 
         try:
             # Load Whisper model
+            preprocess_start = time.time()
             model = load_whisper_model()
+            load_time = time.time() - preprocess_start
+            print(f"Model loaded in {load_time:.2f}s")
 
             # Preprocess audio
             print("Preprocessing audio...")
             wav_bytes = preprocess_audio(request.audio_data, request.format)
+            preprocess_time = time.time() - preprocess_start - load_time
+            print(f"Preprocessing completed in {preprocess_time:.2f}s, wav size: {len(wav_bytes)} bytes")
 
             # Save to temporary file for Whisper
             with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_file:
@@ -97,6 +114,7 @@ class TranscriberServicer(transcribe_pb2_grpc.TranscriberServiceServicer):
             audio_array = whisper.pad_or_trim(audio_array)
 
             # Create mel spectrogram
+            inference_start = time.time()
             mel = whisper.log_mel_spectrogram(audio_array).to(model.device)
 
             # Detect language if not specified
@@ -104,18 +122,31 @@ class TranscriberServicer(transcribe_pb2_grpc.TranscriberServiceServicer):
                 print("Detecting language...")
                 _, probs = model.detect_language(mel)
                 detected_lang = max(probs, key=probs.get)
-                print(f"Detected language: {detected_lang}")
+                max_prob = probs[detected_lang]
+                print(f"Detected language: {detected_lang} (confidence: {max_prob:.3f})")
+                print(f"All probs: {probs}")
+                # Fallback to English if not English/Spanish or low confidence
+                if detected_lang not in ["en", "es"] or max_prob < 0.6:
+                    detected_lang = "en"
+                    print("Fallback to English due to unsupported language or low confidence")
             else:
                 detected_lang = request.language
 
             # Transcribe
             print(f"Transcribing audio as {detected_lang}...")
+            device = model.device
+            print(f"Using device: {device}")
             options = whisper.DecodingOptions(
+
                 language=detected_lang if detected_lang != "auto" else None,
-                fp16=False,  # Use FP32 for CPU
+
+                fp16=device != "cpu",
+
             )
 
             result = whisper.decode(model, mel, options)
+            inference_time = time.time() - inference_start
+            print(f"Whisper inference completed in {inference_time:.2f}s on {device}")
 
             processing_time = time.time() - start_time
 
@@ -129,6 +160,7 @@ class TranscriberServicer(transcribe_pb2_grpc.TranscriberServiceServicer):
             print(
                 f"Transcription: {transcription[:100]}{'...' if len(transcription) > 100 else ''}"
             )
+            print(f"Breakdown - Load: {load_time:.2f}s, Preprocess: {preprocess_time:.2f}s, Inference: {inference_time:.2f}s")
 
             return transcribe_pb2.TranscribeAudioResponse(
                 text=transcription,
@@ -147,6 +179,16 @@ class TranscriberServicer(transcribe_pb2_grpc.TranscriberServiceServicer):
             context.set_code(grpc.StatusCode.INTERNAL)
             context.set_details(f"Transcription failed: {str(e)}")
             return transcribe_pb2.TranscribeAudioResponse()
+
+
+# Pre-load model at startup
+print("Pre-loading Whisper model at startup...")
+try:
+    whisper_model = load_whisper_model()
+    print("Model pre-loaded successfully")
+except Exception as e:
+    print(f"Failed to pre-load model: {e}")
+    whisper_model = None
 
 
 def serve():
